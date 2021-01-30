@@ -1,4 +1,13 @@
-# New Project
+# Create fields for SKV forms
+
+Static site to add fields to Swedish tax agency forms
+
+- [x] Preview image
+- [x] Add fields (text, checkbox)
+- [x] Generate config to console
+- [ ] Load SKV form image
+- [ ] Generate proper config object with copy-to-clipboard
+- [ ] Drag to resize text fields
 
 > ✨ Bootstrapped with Create Snowpack App (CSA).
 
@@ -16,8 +25,6 @@ You will also see any lint errors in the console.
 
 Builds a static copy of your site to the `build/` folder.
 Your app is ready to be deployed!
-
-**For the best production performance:** Add a build bundler plugin like "@snowpack/plugin-webpack" to your `snowpack.config.js` config file.
 
 ### npm test
 
