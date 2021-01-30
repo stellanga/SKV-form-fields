@@ -78,9 +78,15 @@ const Input = styled.input`
 
 type ControlProps = {
   onAddField: (id: string) => void;
+  onAddCheckbox: (id: string) => void;
+  onGenerateConfig: () => void;
 };
 
-export const Controls = ({ onAddField }: ControlProps) => {
+export const Controls = ({
+  onAddField,
+  onAddCheckbox,
+  onGenerateConfig,
+}: ControlProps) => {
   const [id, setId] = useState('');
   const [expanded, setExpanded] = useState(false);
   return (
@@ -100,6 +106,8 @@ export const Controls = ({ onAddField }: ControlProps) => {
             ></Input>
           </IdInput>
           <Button onClick={() => onAddField(id)}>Add field</Button>
+          <Button onClick={() => onAddCheckbox(id)}>Add checkbox</Button>
+          <Button onClick={() => onGenerateConfig()}>Generate config</Button>
         </Controllers>
       )}
     </Panel>

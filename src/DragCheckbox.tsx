@@ -3,12 +3,22 @@ import { useDrag } from 'react-dnd';
 import styled from 'styled-components';
 import { ItemTypes } from './ItemTypes';
 
+const ChildrenWrapper = styled.div`
+  display: none;
+  padding: 0.25rem 1rem;
+`;
+
 const Box = styled.div`
   position: absolute;
+  height: 26px;
   display: flex;
   border: 0;
   background-color: orange;
   cursor: move;
+
+  &:hover ${ChildrenWrapper} {
+    display: block;
+  }
 `;
 
 const Icon = styled.div`
@@ -19,31 +29,21 @@ const Icon = styled.div`
   border-right: 1px solid white;
 `;
 
-const ChildrenWrapper = styled.div`
-  padding: 0.25rem 1rem;
-`;
-
-export interface DragFieldProps {
+export interface DragCheckboxProps {
   id: any;
   left: number;
   top: number;
-  w: number;
   children: React.ReactNode;
   onDelete: () => void;
-  widthIncrease: () => void;
-  widthDecrease: () => void;
 }
 
-export const DragField = ({
+export const DragCheckbox = ({
   id,
   left,
   top,
-  w,
-  widthIncrease,
-  widthDecrease,
   onDelete,
   children,
-}: DragFieldProps) => {
+}: DragCheckboxProps) => {
   const [, drag] = useDrag({
     item: { id, left, top, type: ItemTypes.BOX },
     collect: (monitor) => ({
@@ -52,19 +52,13 @@ export const DragField = ({
   });
 
   return (
-    <Box ref={drag} style={{ left, top, width: `${w}px` }}>
+    <Box ref={drag} style={{ left, top }}>
       <Icon
         onClick={() => {
           onDelete();
         }}
       >
         <i className="material-icons">clear</i>
-      </Icon>
-      <Icon onClick={widthIncrease}>
-        <i className="material-icons">add</i>
-      </Icon>
-      <Icon onClick={widthDecrease}>
-        <i className="material-icons">remove</i>
       </Icon>
       <ChildrenWrapper>{children}</ChildrenWrapper>
     </Box>
