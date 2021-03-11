@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDrag } from 'react-dnd';
 import styled from 'styled-components';
 import { ItemTypes } from './ItemTypes';
@@ -9,6 +9,8 @@ const Box = styled.div`
   border: 0;
   background-color: orange;
   cursor: move;
+  resize: horizontal;
+  overflow: hidden;
 `;
 
 const Icon = styled.div`
@@ -30,8 +32,7 @@ export interface DragFieldProps {
   w: number;
   children: React.ReactNode;
   onDelete: () => void;
-  widthIncrease: () => void;
-  widthDecrease: () => void;
+  widthChange: (id: string, newWidth: number) => void;
 }
 
 export const DragField = ({
@@ -39,8 +40,7 @@ export const DragField = ({
   left,
   top,
   w,
-  widthIncrease,
-  widthDecrease,
+  widthChange,
   onDelete,
   children,
 }: DragFieldProps) => {
@@ -51,20 +51,22 @@ export const DragField = ({
     }),
   });
 
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver((entries) => {
+      widthChange(id, entries[0].contentRect.width);
+    });
+    const element = document.getElementById(id);
+    if (element) resizeObserver.observe(element);
+  }, []);
+
   return (
-    <Box ref={drag} style={{ left, top, width: `${w}px` }}>
+    <Box id={id} ref={drag} style={{ left, top, width: `${w}px` }}>
       <Icon
         onClick={() => {
           onDelete();
         }}
       >
         <i className="material-icons">clear</i>
-      </Icon>
-      <Icon onClick={widthIncrease}>
-        <i className="material-icons">add</i>
-      </Icon>
-      <Icon onClick={widthDecrease}>
-        <i className="material-icons">remove</i>
       </Icon>
       <ChildrenWrapper>{children}</ChildrenWrapper>
     </Box>

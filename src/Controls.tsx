@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 
 const Panel = styled.div`
-  position: absolute;
+  position: fixed;
   top: 4rem;
   right: 0;
   display: flex;
@@ -59,8 +59,13 @@ const FieldLabel = styled.span`
   padding-right: 1rem;
 `;
 
-const IdInput = styled.div`
+const InputWrapper = styled.div`
   display: flex;
+  color: white;
+
+  > label {
+    padding-left: 0.5rem;
+  }
 `;
 
 const Input = styled.input`
@@ -77,18 +82,26 @@ const Input = styled.input`
 `;
 
 type ControlProps = {
-  onAddField: (id: string) => void;
-  onAddCheckbox: (id: string) => void;
+  onImgSrcSet: (src: string) => void;
+  onAddField: (id: string, fieldVariant: any) => void;
   onGenerateConfig: () => void;
 };
 
 export const Controls = ({
+  onImgSrcSet,
   onAddField,
-  onAddCheckbox,
   onGenerateConfig,
 }: ControlProps) => {
   const [id, setId] = useState('');
   const [expanded, setExpanded] = useState(false);
+  const [selectedFieldType, setSelectedFieldType] = useState('number');
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && id !== '') {
+      onAddField(id, selectedFieldType);
+    }
+  };
+
   return (
     <Panel>
       <Toggle onClick={() => setExpanded(!expanded)}>
@@ -98,15 +111,54 @@ export const Controls = ({
       </Toggle>
       {expanded && (
         <Controllers>
-          <IdInput>
+          <InputWrapper>
             <FieldLabel>ID:</FieldLabel>
             <Input
               onChange={(e) => setId(e.currentTarget.value)}
+              onKeyDown={onKeyDown}
               type="text"
             ></Input>
-          </IdInput>
-          <Button onClick={() => onAddField(id)}>Add field</Button>
-          <Button onClick={() => onAddCheckbox(id)}>Add checkbox</Button>
+          </InputWrapper>
+          <InputWrapper>
+            <input
+              type="radio"
+              id="numberInput"
+              name="fieldType"
+              value="number"
+              checked={selectedFieldType === 'number'}
+              onChange={() => setSelectedFieldType('number')}
+            />
+            <label htmlFor="numberInput">Number</label>
+          </InputWrapper>
+          <InputWrapper>
+            <input
+              type="radio"
+              id="textInput"
+              name="fieldType"
+              value="text"
+              checked={selectedFieldType === 'text'}
+              onChange={() => setSelectedFieldType('text')}
+            />
+            <label htmlFor="textInput">Text</label>
+          </InputWrapper>
+          <InputWrapper>
+            <input
+              type="radio"
+              id="checkboxInput"
+              name="fieldType"
+              value="checkbox"
+              checked={selectedFieldType === 'checkbox'}
+              onChange={() => setSelectedFieldType('checkbox')}
+            />
+            <label htmlFor="checkboxInput">Checkbox</label>
+          </InputWrapper>
+          <InputWrapper>
+            <FieldLabel>Img src:</FieldLabel>
+            <Input
+              onChange={(e) => onImgSrcSet(e.currentTarget.value)}
+              type="text"
+            ></Input>
+          </InputWrapper>
           <Button onClick={() => onGenerateConfig()}>Generate config</Button>
         </Controllers>
       )}

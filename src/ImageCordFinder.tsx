@@ -32,7 +32,7 @@ const fixNumber = (num: Number) => {
 };
 
 type FieldType = {
-  variant: 'field' | 'checkbox';
+  variant: 'text' | 'checkbox' | 'number';
   top: number;
   left: number;
   title: string;
@@ -42,6 +42,7 @@ type FieldType = {
 type Fields = Record<string, FieldType>;
 
 export const ImageCordFinder = () => {
+  const [imgSrc, setImgSrc] = useState('');
   const [boxes, setBoxes] = useState<Fields>({});
 
   const [, drop] = useDrop({
@@ -56,34 +57,28 @@ export const ImageCordFinder = () => {
   });
 
   const moveBox = (id: string, left: number, top: number) => {
-    setBoxes(
-      update(boxes, {
-        [id]: {
-          $merge: { left, top },
-        },
-      }),
-    );
+    setBoxes({ ...boxes, [id]: { ...boxes[id], left, top } });
   };
 
-  const addField = (id: string) => {
+  const imgSrcSet = (src: string) => {
+    setImgSrc(src);
+  };
+
+  const addField = (id: string, fieldVariant: FieldType['variant']) => {
     setBoxes({
       ...boxes,
-      [id]: { variant: 'field', top: 0, left: 0, title: id, w: 250 },
-    });
-  };
-  const addCheckbox = (id: string) => {
-    setBoxes({
-      ...boxes,
-      [id]: { variant: 'checkbox', top: 0, left: 0, title: id, w: 25 },
+      [id]: {
+        variant: fieldVariant,
+        top: window.scrollY,
+        left: 50,
+        title: id,
+        w: fieldVariant === 'checkbox' ? 25 : 250,
+      },
     });
   };
 
-  const increaseFieldWidth = (id: string) => {
-    setBoxes({ ...boxes, [id]: { ...boxes[id], w: boxes[id].w + 10 } });
-  };
-
-  const decreaseFieldWidth = (id: string) => {
-    setBoxes({ ...boxes, [id]: { ...boxes[id], w: boxes[id].w - 10 } });
+  const onFieldWidthChange = (id: string, newWidth: number) => {
+    setBoxes((boxes) => ({ ...boxes, [id]: { ...boxes[id], w: newWidth } }));
   };
 
   const deleteField = (id: string) => {
@@ -102,10 +97,10 @@ export const ImageCordFinder = () => {
       const { left, top, w, variant } = boxes[key];
       return {
         id: key,
-        xPosPercent: fixNumber(left / imageWidth),
-        yPosPercent: fixNumber(top / imageHeight),
-        widthPercent: fixNumber(w / imageWidth),
-        variant,
+        x: fixNumber(left / imageWidth),
+        y: fixNumber(top / imageHeight),
+        w: fixNumber(w / imageWidth),
+        type: variant,
       };
     });
     console.log(config);
@@ -115,20 +110,30 @@ export const ImageCordFinder = () => {
     <Wrapper>
       <Controls
         onAddField={addField}
-        onAddCheckbox={addCheckbox}
         onGenerateConfig={generateConfig}
+        onImgSrcSet={imgSrcSet}
       />
 
       <ImageWrapper>
-        <Image
-          id="referenceImage"
-          ref={drop}
-          src="https://agoy-assets20200723124850670400000001.s3-eu-west-1.amazonaws.com/skv/2002/2020-01-01-2020-12-31/printable-0.jpg"
-          alt=""
-        />
+        <Image id="referenceImage" ref={drop} src={imgSrc} alt="" />
         {Object.keys(boxes).map((key) => {
           const { left, top, title, w: width, variant } = boxes[key];
-          return variant === 'field' ? (
+          if (variant === 'checkbox') {
+            return (
+              <DragCheckbox
+                onDelete={() => {
+                  deleteField(key);
+                }}
+                key={key}
+                id={key}
+                left={left}
+                top={top}
+              >
+                {title}
+              </DragCheckbox>
+            );
+          }
+          return (
             <DragField
               onDelete={() => {
                 deleteField(key);
@@ -138,27 +143,10 @@ export const ImageCordFinder = () => {
               left={left}
               top={top}
               w={width}
-              widthIncrease={() => {
-                increaseFieldWidth(key);
-              }}
-              widthDecrease={() => {
-                decreaseFieldWidth(key);
-              }}
+              widthChange={onFieldWidthChange}
             >
               {title}
             </DragField>
-          ) : (
-            <DragCheckbox
-              onDelete={() => {
-                deleteField(key);
-              }}
-              key={key}
-              id={key}
-              left={left}
-              top={top}
-            >
-              {title}
-            </DragCheckbox>
           );
         })}
       </ImageWrapper>
