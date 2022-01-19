@@ -5,9 +5,9 @@ Static site to add fields to Swedish tax agency forms
 - [x] Preview image
 - [x] Add fields (text, checkbox)
 - [x] Generate config to console
-- [ ] Load SKV form image
+- [x] Load SKV form image
 - [ ] Generate proper config object with copy-to-clipboard
-- [ ] Drag to resize text fields
+- [x] Drag to resize text fields
 
 > ✨ Bootstrapped with Create Snowpack App (CSA).
 
