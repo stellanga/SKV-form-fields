@@ -1,6 +1,7 @@
 {
   "include": ["src", "types"],
   "compilerOptions": {
+    "lib": ["es2017", "DOM"],
     "module": "esnext",
     "target": "esnext",
     "moduleResolution": "node",

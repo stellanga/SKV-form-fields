@@ -28,7 +28,7 @@ const Image = styled.img`
 `;
 
 const fixNumber = (num: Number) => {
-  return num.toFixed(3);
+  return Number.parseFloat(num.toFixed(3));
 };
 
 type FieldType = {
