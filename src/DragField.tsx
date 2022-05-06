@@ -53,7 +53,8 @@ export const DragField = ({
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver((entries) => {
-      widthChange(id, entries[0].contentRect.width);
+      // We add a timer to avoid the error 'ResizeObserver - loop limit exceeded'
+      setTimeout(() => widthChange(id, entries[0].contentRect.width)), 100;
     });
     const element = document.getElementById(id);
     if (element) resizeObserver.observe(element);
